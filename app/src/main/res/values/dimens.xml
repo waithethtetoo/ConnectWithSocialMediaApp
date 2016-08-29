@@ -1,0 +1,11 @@
+<resources>
+    <!-- Default screen margins, per the Android Design guidelines. -->
+    <dimen name="activity_horizontal_margin">16dp</dimen>
+    <dimen name="activity_vertical_margin">16dp</dimen>
+    <dimen name="fab_margin">16dp</dimen>
+    <dimen name="profile_height">80dp</dimen>
+    <dimen name="margin_medium_2">20dp</dimen>
+    <dimen name="margin_small">10dp</dimen>
+    <dimen name="user_profile_image_size_large">60dp</dimen>
+    <dimen name="margin_medium">40dp</dimen>
+</resources>
