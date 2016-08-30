@@ -20,13 +20,14 @@ public class FacebookUtils {
     public static final String[] FACEBOOK_LOGIN_PERMISSIONS = {"public_profile", "email"};
 
     private static FacebookUtils objInstance;
+
     private Context context;
 
     private FacebookUtils() {
         context = ConnectWithSocialMediaApp.getContext();
     }
 
-    public static FacebookUtils getObjInstance() {
+    public static FacebookUtils getInstance() {
         if (objInstance == null) {
             objInstance = new FacebookUtils();
         }
@@ -34,6 +35,7 @@ public class FacebookUtils {
     }
 
     public void requestFacebookLoginUser(final AccessToken accessToken, final FacebookGetLoginUserCallback callback) {
+
         if (NetworkUtils.isOnline(ConnectWithSocialMediaApp.getContext())) {
             GraphRequest request = GraphRequest.newMeRequest(accessToken,
                     new GraphRequest.GraphJSONObjectCallback() {
@@ -47,53 +49,62 @@ public class FacebookUtils {
             request.setParameters(bundle);
             request.executeAsync();
         }
+
     }
 
     public void requestFacebookCoverPhoto(AccessToken accessToken, final FacebookGetPictureCallback callback) {
-        if (NetworkUtils.isOnline(ConnectWithSocialMediaApp.getContext())) {
-            Bundle bundle = new Bundle();
-            bundle.putString("field", "cover");
-            GraphRequest request = new GraphRequest(accessToken,
-                    "me",
-                    bundle,
-                    HttpMethod.GET,
-                    new GraphRequest.Callback() {
-                        @Override
-                        public void onCompleted(GraphResponse response) {
-                            try {
-                                JSONObject coverRequest = response.getJSONObject().getJSONObject("cover");
-                                String coverUrl = coverRequest.getString("source");
-                                callback.onSuccess(coverUrl);
-                            } catch (JSONException e) {
-                                Log.e(ConnectWithSocialMediaApp.TAG, e.getMessage());
-                            }
-                        }
-                    });
-        }
-    }
 
-    public void requestFacebookProfilePhoto(AccessToken accessToken, final FacebookGetPictureCallback callback) {
         if (NetworkUtils.isOnline(ConnectWithSocialMediaApp.getContext())) {
-            Bundle bundle = new Bundle();
-            bundle.putString("redirect", "false");
-            bundle.putString("type", "large");
+            Bundle params = new Bundle();
+            params.putString("fields", "cover");
             GraphRequest request = new GraphRequest(
                     accessToken,
-                    "me/picture",
-                    bundle,
+                    "me",
+                    params,
                     HttpMethod.GET,
                     new GraphRequest.Callback() {
-                        @Override
                         public void onCompleted(GraphResponse response) {
                             try {
-                                String profilePhotoUrl = response.getJSONObject().getJSONObject("data").getString("url");
-                                callback.onSuccess(profilePhotoUrl);
+                                JSONObject coverResponse = response.getJSONObject().getJSONObject("cover");
+                                String coverUrl = coverResponse.getString("source");
+                                //UserModel.getInstance().addFacebookCoverUrl(coverUrl);
+                                callback.onSuccess(coverUrl);
+
                             } catch (JSONException e) {
                                 Log.e(ConnectWithSocialMediaApp.TAG, e.getMessage());
                             }
                         }
                     }
             );
+            request.executeAsync();
+        }
+
+    }
+
+    public void requestFacebookProfilePhoto(AccessToken accessToken, final FacebookGetPictureCallback callback) {
+        if (NetworkUtils.isOnline(ConnectWithSocialMediaApp.getContext())) {
+            Bundle params = new Bundle();
+            params.putString("redirect", "false");
+            params.putString("type", "large");
+            GraphRequest request = new GraphRequest(
+                    accessToken,
+                    "me/picture",
+                    params,
+                    HttpMethod.GET,
+                    new GraphRequest.Callback() {
+                        public void onCompleted(GraphResponse response) {
+                            try {
+                                String profilePhotoUrl = response.getJSONObject().getJSONObject("data").getString("url");
+                                //UserModel.getInstance().addFacebookProfileUrl(profilePhotoUrl);
+                                callback.onSuccess(profilePhotoUrl);
+
+                            } catch (JSONException e) {
+                                Log.e(ConnectWithSocialMediaApp.TAG, e.getMessage());
+                            }
+                        }
+                    }
+            );
+            request.executeAsync();
         }
     }
 
@@ -104,5 +115,6 @@ public class FacebookUtils {
     public interface FacebookGetPictureCallback {
         void onSuccess(String imageUrl);
     }
+
 }
 

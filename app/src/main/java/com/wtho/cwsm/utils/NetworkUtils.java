@@ -8,6 +8,7 @@ import android.net.NetworkInfo;
  * Created by WT on 8/29/2016.
  */
 public class NetworkUtils {
+
     public static boolean isOnline(Context context) {
         ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo networkInfo = cm.getActiveNetworkInfo();

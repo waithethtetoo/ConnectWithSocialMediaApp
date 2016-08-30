@@ -15,12 +15,16 @@ public class ConnectWithSocialMediaApp extends Application {
 
     private static Context context;
 
+    public static Context getContext() {
+        return context;
+    }
+
     @Override
     public void onCreate() {
         super.onCreate();
         context = getApplicationContext();
         FacebookSdk.sdkInitialize(getApplicationContext());
-        AppEventsLogger.activateApp(this);
+
     }
-    public static Context getContext(){return context;}
+
 }
